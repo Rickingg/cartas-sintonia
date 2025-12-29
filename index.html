@@ -1,0 +1,438 @@
+import React, { useState, useEffect } from 'react';
+import { Heart, Home, Shuffle, List, Search } from 'lucide-react';
+
+// Lista completa de cartas
+const CARTAS = [
+  { id: 1, esquerda: "Mais impulsivo", direita: "Mais racional" },
+  { id: 2, esquerda: "Doce mais gostoso", direita: "Doce mais ruim" },
+  { id: 3, esquerda: "Mais romântico", direita: "Menos romântico" },
+  { id: 4, esquerda: "Melhor filme", direita: "Pior filme" },
+  { id: 5, esquerda: "Matéria mais difícil", direita: "Mais fácil" },
+  { id: 6, esquerda: "Melhor desculpa", direita: "Pior desculpa" },
+  { id: 7, esquerda: "Superpoder mais inútil", direita: "Mais útil" },
+  { id: 8, esquerda: "Mais falso", direita: "Menos falso" },
+  { id: 9, esquerda: "Dia mais cansativo", direita: "Mais leve" },
+  { id: 10, esquerda: "Coisa mais nojenta", direita: "Menos nojenta" },
+  { id: 11, esquerda: "Mais organizado", direita: "Mais bagunceiro" },
+  { id: 12, esquerda: "Pizza melhor sabor", direita: "Pior sabor" },
+  { id: 13, esquerda: "Melhor presente", direita: "Pior presente" },
+  { id: 14, esquerda: "Melhor jogo", direita: "Pior jogo" },
+  { id: 15, esquerda: "Coisa mais sem noção", direita: "Mais sensata" },
+  { id: 16, esquerda: "Poder mais perigoso", direita: "Menos perigoso" },
+  { id: 17, esquerda: "Mais confiável", direita: "Menos confiável" },
+  { id: 18, esquerda: "Professor mais rígido", direita: "Mais tranquilo" },
+  { id: 19, esquerda: "Situação mais vergonhosa", direita: "Menos vergonhosa" },
+  { id: 20, esquerda: "Mais atrasado", direita: "Mais pontual" },
+  { id: 21, esquerda: "Mais tímido", direita: "Mais extrovertido" },
+  { id: 22, esquerda: "Melhor sobremesa", direita: "Pior sobremesa" },
+  { id: 23, esquerda: "Melhor encontro", direita: "Pior encontro" },
+  { id: 24, esquerda: "Melhor música", direita: "Pior música" },
+  { id: 25, esquerda: "Mentira mais óbvia", direita: "Mais convincente" },
+  { id: 26, esquerda: "Herói melhor", direita: "Pior" },
+  { id: 27, esquerda: "Mais popular", direita: "Menos popular" },
+  { id: 28, esquerda: "Aula mais inútil", direita: "Mais útil" },
+  { id: 29, esquerda: "Pior medo", direita: "Medo bobo" },
+  { id: 30, esquerda: "Mais viciado em celular", direita: "Menos" },
+  { id: 31, esquerda: "Mais paciente", direita: "Mais estressado" },
+  { id: 32, esquerda: "Lanche melhor", direita: "Lanche pior" },
+  { id: 33, esquerda: "Mais ciumento", direita: "Mais tranquilo" },
+  { id: 34, esquerda: "Melhor série", direita: "Pior série" },
+  { id: 35, esquerda: "Melhor zoeira", direita: "Mais pesada" },
+  { id: 36, esquerda: "Poder mais estranho", direita: "Mais normal" },
+  { id: 37, esquerda: "Mais odiado", direita: "Menos odiado" },
+  { id: 38, esquerda: "Prova mais difícil", direita: "Mais fácil" },
+  { id: 39, esquerda: "Pior castigo", direita: "Mais tranquilo" },
+  { id: 40, esquerda: "Mais gastador", direita: "Mais econômico" },
+  { id: 41, esquerda: "Mais otimista", direita: "Mais pessimista" },
+  { id: 42, esquerda: "Bebida mais gostosa", direita: "Mais ruim" },
+  { id: 43, esquerda: "Melhor casal", direita: "Pior casal" },
+  { id: 44, esquerda: "Melhor aplicativo", direita: "Pior aplicativo" },
+  { id: 45, esquerda: "Melhor piada", direita: "Pior piada" },
+  { id: 46, esquerda: "Vilão mais forte", direita: "Mais fraco" },
+  { id: 47, esquerda: "Mais carismático", direita: "Menos carismático" },
+  { id: 48, esquerda: "Aluno mais dedicado", direita: "Menos dedicado" },
+  { id: 49, esquerda: "Coisa mais assustadora", direita: "Menos assustadora" },
+  { id: 50, esquerda: "Mais rico", direita: "Mais pobre" },
+  { id: 51, esquerda: "Mais responsável", direita: "Menos responsável" },
+  { id: 52, esquerda: "Salgado melhor", direita: "Salgado pior" },
+  { id: 53, esquerda: "Mais apaixonado", direita: "Menos apaixonado" },
+  { id: 54, esquerda: "Melhor rede social", direita: "Pior rede social" },
+  { id: 55, esquerda: "Coisa mais aleatória", direita: "Mais normal" },
+  { id: 56, esquerda: "Poder mais roubado", direita: "Mais fraco" },
+  { id: 57, esquerda: "Mais engraçado", direita: "Menos engraçado" },
+  { id: 58, esquerda: "Melhor nota", direita: "Pior nota" },
+  { id: 59, esquerda: "Pior dor", direita: "Dor mais leve" },
+  { id: 60, esquerda: "Melhor profissão", direita: "Pior profissão" },
+  { id: 61, esquerda: "Mais sincero", direita: "Mais mentiroso" },
+  { id: 62, esquerda: "Comida mais saudável", direita: "Menos saudável" },
+  { id: 63, esquerda: "Melhor conversa", direita: "Mais chata" },
+  { id: 64, esquerda: "Melhor youtuber", direita: "Pior youtuber" },
+  { id: 65, esquerda: "Melhor desculpa pra faltar", direita: "Pior" },
+  { id: 66, esquerda: "Poder que você queria", direita: "Que não queria" },
+  { id: 67, esquerda: "Mais chato", direita: "Menos chato" },
+  { id: 68, esquerda: "Escola melhor", direita: "Pior" },
+  { id: 69, esquerda: "Situação mais tensa", direita: "Mais tranquila" },
+  { id: 70, esquerda: "Melhor salário", direita: "Pior salário" },
+  { id: 71, esquerda: "Mais corajoso", direita: "Mais medroso" },
+  { id: 72, esquerda: "Comida que mais enjoa", direita: "Menos enjoa" },
+  { id: 73, esquerda: "Melhor primeira impressão", direita: "Pior" },
+  { id: 74, esquerda: "Melhor desenho", direita: "Pior desenho" },
+  { id: 75, esquerda: "Coisa mais inútil", direita: "Mais útil" },
+  { id: 76, esquerda: "Poder mais assustador", direita: "Menos assustador" },
+  { id: 77, esquerda: "Mais fiel", direita: "Menos fiel" },
+  { id: 78, esquerda: "Professor mais legal", direita: "Mais chato" },
+  { id: 79, esquerda: "Pior erro", direita: "Erro pequeno" },
+  { id: 80, esquerda: "Melhor investimento", direita: "Pior investimento" },
+  { id: 81, esquerda: "Mais maduro", direita: "Mais infantil" },
+  { id: 82, esquerda: "Melhor mistura", direita: "Pior mistura" },
+  { id: 83, esquerda: "Melhor namorado(a)", direita: "Pior" },
+  { id: 84, esquerda: "Melhor passatempo", direita: "Pior passatempo" },
+  { id: 85, esquerda: "Coisa mais estranha", direita: "Mais comum" },
+  { id: 86, esquerda: "Superpoder mais forte", direita: "Mais fraco" },
+  { id: 87, esquerda: "Mais tóxico", direita: "Menos tóxico" },
+  { id: 88, esquerda: "Matéria mais chata", direita: "Mais legal" },
+  { id: 89, esquerda: "Coisa mais irritante", direita: "Menos irritante" },
+  { id: 90, esquerda: "Maior sonho", direita: "Menor sonho" },
+  { id: 91, esquerda: "Mais competitivo", direita: "Mais de boa" },
+  { id: 92, esquerda: "Melhor comida", direita: "Pior comida" },
+  { id: 93, esquerda: "Maior prova de amor", direita: "Menor" },
+  { id: 94, esquerda: "Melhor brincadeira", direita: "Mais chata" },
+  { id: 95, esquerda: "Melhor apelido", direita: "Pior apelido" },
+  { id: 96, esquerda: "Poder mais legal", direita: "Mais sem graça" },
+  { id: 97, esquerda: "Mais influente", direita: "Menos influente" },
+  { id: 98, esquerda: "Dia mais difícil", direita: "Mais fácil" },
+  { id: 99, esquerda: "Pior dia", direita: "Melhor dia" },
+  { id: 100, esquerda: "Melhor negócio", direita: "Pior negócio" }
+];
+
+// Componente da Carta
+const Carta = ({ carta, onFavoritar, isFavorita }) => {
+  return (
+    <div className="flex flex-col items-center gap-4 w-full max-w-md mx-auto px-4">
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full" style={{ aspectRatio: '2/3' }}>
+        <div className="flex h-full">
+          {/* Lado Esquerdo (Rosa) */}
+          <div className="w-1/2 bg-gradient-to-br from-pink-200 to-rose-300 flex flex-col items-center justify-center p-4 relative">
+            <div className="absolute top-4 text-3xl font-bold text-rose-600">←</div>
+            <p className="text-center text-gray-800 font-semibold text-sm sm:text-base md:text-lg px-2 leading-tight">
+              {carta.esquerda}
+            </p>
+          </div>
+          
+          {/* Lado Direito (Verde) */}
+          <div className="w-1/2 bg-gradient-to-br from-green-200 to-emerald-300 flex flex-col items-center justify-center p-4 relative">
+            <div className="absolute top-4 text-3xl font-bold text-green-600">→</div>
+            <p className="text-center text-gray-800 font-semibold text-sm sm:text-base md:text-lg px-2 leading-tight">
+              {carta.direita}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <button
+        onClick={onFavoritar}
+        className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all ${
+          isFavorita
+            ? 'bg-red-500 text-white hover:bg-red-600'
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+        }`}
+      >
+        <Heart className={isFavorita ? 'fill-current' : ''} size={20} />
+        {isFavorita ? 'Remover Favorito' : 'Favoritar'}
+      </button>
+    </div>
+  );
+};
+
+// App Principal
+export default function JogoSintonia() {
+  const [tela, setTela] = useState('inicio');
+  const [cartaAtual, setCartaAtual] = useState(null);
+  const [favoritos, setFavoritos] = useState([]);
+  const [busca, setBusca] = useState('');
+
+  // Carregar favoritos do localStorage
+  useEffect(() => {
+    const favoritosSalvos = localStorage.getItem('jogoSintoniaFavoritos');
+    if (favoritosSalvos) {
+      setFavoritos(JSON.parse(favoritosSalvos));
+    }
+  }, []);
+
+  // Salvar favoritos no localStorage
+  useEffect(() => {
+    localStorage.setItem('jogoSintoniaFavoritos', JSON.stringify(favoritos));
+  }, [favoritos]);
+
+  const sortearCarta = () => {
+    const indiceAleatorio = Math.floor(Math.random() * CARTAS.length);
+    setCartaAtual(CARTAS[indiceAleatorio]);
+  };
+
+  const toggleFavorito = (carta) => {
+    if (favoritos.some(f => f.id === carta.id)) {
+      setFavoritos(favoritos.filter(f => f.id !== carta.id));
+    } else {
+      setFavoritos([...favoritos, carta]);
+    }
+  };
+
+  const isFavorita = (carta) => {
+    return favoritos.some(f => f.id === carta.id);
+  };
+
+  const cartasFiltradas = CARTAS.filter(carta =>
+    carta.esquerda.toLowerCase().includes(busca.toLowerCase()) ||
+    carta.direita.toLowerCase().includes(busca.toLowerCase())
+  );
+
+  // Tela Inicial
+  if (tela === 'inicio') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center p-4">
+        <div className="text-center space-y-8 max-w-md w-full">
+          <h1 className="text-5xl sm:text-6xl font-bold text-white drop-shadow-lg">
+            🎴 Jogo Sintonia
+          </h1>
+          
+          <div className="space-y-4">
+            <button
+              onClick={() => {
+                sortearCarta();
+                setTela('automatica');
+              }}
+              className="w-full bg-white text-purple-600 px-8 py-4 rounded-2xl text-xl font-bold shadow-xl hover:scale-105 transition-transform"
+            >
+              🎴 Carta Automática
+            </button>
+            
+            <button
+              onClick={() => setTela('manual')}
+              className="w-full bg-white text-pink-600 px-8 py-4 rounded-2xl text-xl font-bold shadow-xl hover:scale-105 transition-transform"
+            >
+              📝 Escolher Carta Manualmente
+            </button>
+            
+            <button
+              onClick={() => setTela('favoritos')}
+              className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-xl hover:scale-105 transition-transform"
+            >
+              ⭐ Cartas Favoritas ({favoritos.length})
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Tela Carta Automática
+  if (tela === 'automatica') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 py-8">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center drop-shadow-lg">
+            Carta Sorteada
+          </h2>
+          
+          {cartaAtual && (
+            <Carta
+              carta={cartaAtual}
+              onFavoritar={() => toggleFavorito(cartaAtual)}
+              isFavorita={isFavorita(cartaAtual)}
+            />
+          )}
+          
+          <div className="flex flex-wrap gap-3 justify-center">
+            <button
+              onClick={sortearCarta}
+              className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-green-600 transition-colors"
+            >
+              <Shuffle size={20} />
+              Nova Carta
+            </button>
+            
+            <button
+              onClick={() => setTela('inicio')}
+              className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors"
+            >
+              <Home size={20} />
+              Voltar ao Início
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Tela Escolha Manual
+  if (tela === 'manual') {
+    if (cartaAtual) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-400 p-4 py-8">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white text-center drop-shadow-lg">
+              Carta #{cartaAtual.id}
+            </h2>
+            
+            <Carta
+              carta={cartaAtual}
+              onFavoritar={() => toggleFavorito(cartaAtual)}
+              isFavorita={isFavorita(cartaAtual)}
+            />
+            
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button
+                onClick={() => setCartaAtual(null)}
+                className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors"
+              >
+                <List size={20} />
+                Voltar à Lista
+              </button>
+              
+              <button
+                onClick={() => setTela('inicio')}
+                className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors"
+              >
+                <Home size={20} />
+                Início
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-400 p-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center drop-shadow-lg">
+            Escolha uma Carta
+          </h2>
+          
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Buscar carta..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-full text-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-white"
+            />
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-xl p-4 max-h-96 overflow-y-auto">
+            <div className="space-y-2">
+              {cartasFiltradas.map((carta) => (
+                <button
+                  key={carta.id}
+                  onClick={() => setCartaAtual(carta)}
+                  className="w-full text-left p-4 rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-3"
+                >
+                  <span className="font-bold text-purple-600 min-w-[3rem]">#{carta.id}</span>
+                  <span className="text-gray-700">{carta.esquerda} ←→ {carta.direita}</span>
+                  {isFavorita(carta) && <Heart className="fill-red-500 text-red-500 ml-auto" size={20} />}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <button
+            onClick={() => setTela('inicio')}
+            className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors mx-auto"
+          >
+            <Home size={20} />
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Tela Favoritos
+  if (tela === 'favoritos') {
+    if (cartaAtual) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-4 py-8">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white text-center drop-shadow-lg">
+              Carta Favorita
+            </h2>
+            
+            <Carta
+              carta={cartaAtual}
+              onFavoritar={() => toggleFavorito(cartaAtual)}
+              isFavorita={isFavorita(cartaAtual)}
+            />
+            
+            <div className="flex flex-wrap gap-3 justify-center">
+              <button
+                onClick={() => setCartaAtual(null)}
+                className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors"
+              >
+                <Heart size={20} />
+                Ver Favoritos
+              </button>
+              
+              <button
+                onClick={() => setTela('inicio')}
+                className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors"
+              >
+                <Home size={20} />
+                Início
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center drop-shadow-lg">
+            ⭐ Minhas Favoritas ({favoritos.length})
+          </h2>
+          
+          {favoritos.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+              <p className="text-gray-600 text-lg">Você ainda não tem cartas favoritas.</p>
+              <p className="text-gray-500 mt-2">Favorite suas cartas preferidas para vê-las aqui!</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-xl p-4 max-h-96 overflow-y-auto">
+              <div className="space-y-2">
+                {favoritos.map((carta) => (
+                  <div key={carta.id} className="flex items-center gap-3 p-4 rounded-xl hover:bg-gray-100">
+                    <button
+                      onClick={() => setCartaAtual(carta)}
+                      className="flex-1 text-left"
+                    >
+                      <span className="font-bold text-orange-600 mr-3">#{carta.id}</span>
+                      <span className="text-gray-700">{carta.esquerda} ←→ {carta.direita}</span>
+                    </button>
+                    <button
+                      onClick={() => toggleFavorito(carta)}
+                      className="text-red-500 hover:text-red-600 transition-colors"
+                    >
+                      <Heart className="fill-current" size={24} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          <button
+            onClick={() => setTela('inicio')}
+            className="flex items-center gap-2 bg-gray-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-800 transition-colors mx-auto"
+          >
+            <Home size={20} />
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
