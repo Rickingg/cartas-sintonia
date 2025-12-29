@@ -1,0 +1,2 @@
+# cartas-sintonia
+sintonia.game
